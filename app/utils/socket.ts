@@ -1,10 +1,10 @@
-import { io, Socket } from 'socket.io-client';
+import { Manager, Socket as ClientSocket } from 'socket.io-client';
 
-let socket: Socket | null = null;
+let socket: ClientSocket | null = null;
 
 export const initializeSocket = (token: string) => {
   if (!socket) {
-    socket = io(process.env.NEXT_PUBLIC_API_URL || 'https://researchbridge-server.onrender.com', {
+    const manager = new Manager(process.env.NEXT_PUBLIC_API_URL || 'https://researchbridge-server.onrender.com', {
       auth: {
         token,
       },
@@ -15,6 +15,8 @@ export const initializeSocket = (token: string) => {
       reconnectionDelayMax: 5000,
       reconnectionAttempts: 5,
     });
+    
+    socket = manager.socket('/');
 
     socket.on('connect', () => {
       console.log('Socket connected');
