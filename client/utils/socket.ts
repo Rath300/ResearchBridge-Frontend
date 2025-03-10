@@ -1,19 +1,48 @@
-import { io } from "socket.io-client"
+import { Manager } from "socket.io-client";
+import io from "socket.io-client";
+
+let socket: ReturnType<typeof io> | null = null;
 
 export const initializeSocket = (token: string) => {
-  const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000", {
-    auth: { token },
-    transports: ["websocket"],
+  if (socket) return socket;
+
+  socket = io(process.env.NEXT_PUBLIC_API_URL || "https://researchbridge-server.onrender.com", {
+    auth: {
+      token
+    },
+    transports: ['websocket'],
+    autoConnect: true,
     reconnection: true,
     reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-    timeout: 20000,
-  })
+    reconnectionDelay: 1000
+  });
 
-  socket.on("connect_error", (err) => {
-    console.error("Socket connection error:", err.message)
-  })
+  socket.on('connect', () => {
+    console.log('Socket connected');
+  });
 
-  return socket
-}
+  socket.on('disconnect', () => {
+    console.log('Socket disconnected');
+  });
+
+  socket.on('error', (error: Error) => {
+    console.error('Socket error:', error);
+  });
+
+  return socket;
+};
+
+export const getSocket = () => {
+  if (!socket) {
+    throw new Error('Socket not initialized. Call initializeSocket first.');
+  }
+  return socket;
+};
+
+export const disconnectSocket = () => {
+  if (socket) {
+    socket.disconnect();
+    socket = null;
+  }
+};
 
