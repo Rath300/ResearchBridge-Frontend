@@ -87,5 +87,65 @@ export const api = {
       ...options,
       method: 'PATCH',
       body: JSON.stringify(data)
-    })
+    }),
+
+  // New method for file uploads
+  upload: async <T = any>(
+    endpoint: string,
+    formData: FormData,
+    onProgress?: (progress: number) => void
+  ): Promise<T> => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable && onProgress) {
+          const progress = (event.loaded / event.total) * 100;
+          onProgress(progress);
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response);
+          } catch {
+            resolve({} as T);
+          }
+        } else {
+          try {
+            const error = JSON.parse(xhr.responseText);
+            reject({
+              message: error.message || `Upload failed with status: ${xhr.status}`,
+              status: xhr.status,
+              code: error.code
+            });
+          } catch {
+            reject({
+              message: 'Upload failed',
+              status: xhr.status,
+              code: 'UPLOAD_ERROR'
+            });
+          }
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject({
+          message: 'Network error during upload',
+          status: 0,
+          code: 'NETWORK_ERROR'
+        });
+      });
+
+      xhr.open('POST', `${API_URL}${endpoint}`);
+      if (token) {
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      }
+      xhr.send(formData);
+    });
+  }
 }; 
