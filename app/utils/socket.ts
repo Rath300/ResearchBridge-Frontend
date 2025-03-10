@@ -1,7 +1,7 @@
 import { Manager } from 'socket.io-client';
-import type { Socket as ClientToServerSocket } from 'socket.io-client/build/typed-events';
+import type { Socket } from 'socket.io-client';
 
-let socket: ClientToServerSocket | null = null;
+let socket: Socket | null = null;
 
 export const initializeSocket = (token: string) => {
   if (!socket) {
@@ -17,7 +17,7 @@ export const initializeSocket = (token: string) => {
       reconnectionAttempts: 5,
     });
     
-    socket = manager.socket('/') as ClientToServerSocket;
+    socket = manager.socket('/');
 
     socket.on('connect', () => {
       console.log('Socket connected');
