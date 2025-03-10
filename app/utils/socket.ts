@@ -1,12 +1,14 @@
 import { Manager } from 'socket.io-client';
 
+const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL || 'https://researchbridge-server.onrender.com';
+
 type SocketType = any; // TODO: Replace with proper type when available
 
 let socket: SocketType | null = null;
 
 export const initializeSocket = (token: string): SocketType | null => {
   if (!socket) {
-    const manager = new Manager(process.env.NEXT_PUBLIC_API_URL || 'https://researchbridge-server.onrender.com', {
+    const manager = new Manager(SOCKET_URL, {
       auth: {
         token,
       },
