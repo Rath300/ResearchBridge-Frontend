@@ -1,9 +1,28 @@
-import { Socket as BaseSocket } from 'socket.io-client';
-
-export interface CustomSocket extends BaseSocket {
-  // Add any custom event types here if needed
-}
+import { Socket as SocketIOClient } from 'socket.io-client';
 
 declare module 'socket.io-client' {
-  export interface Socket extends CustomSocket {}
+  interface SocketEvents {
+    connect: () => void;
+    disconnect: () => void;
+    error: (error: Error) => void;
+  }
+
+  interface SocketOptions {
+    auth: {
+      token: string;
+    };
+    transports: string[];
+    autoConnect: boolean;
+    reconnection: boolean;
+    reconnectionDelay: number;
+    reconnectionDelayMax: number;
+    reconnectionAttempts: number;
+  }
+
+  type SocketType = SocketIOClient & {
+    on: <T extends keyof SocketEvents>(event: T, listener: SocketEvents[T]) => void;
+    emit: <T extends keyof SocketEvents>(event: T, ...args: Parameters<SocketEvents[T]>) => void;
+  };
+
+  export { SocketType as Socket };
 } 
