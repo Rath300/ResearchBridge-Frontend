@@ -1,9 +1,10 @@
 import { Manager } from 'socket.io-client';
-import type { Socket } from 'socket.io-client';
 
-let socket: Socket | null = null;
+type SocketType = any; // TODO: Replace with proper type when available
 
-export const initializeSocket = (token: string) => {
+let socket: SocketType | null = null;
+
+export const initializeSocket = (token: string): SocketType | null => {
   if (!socket) {
     const manager = new Manager(process.env.NEXT_PUBLIC_API_URL || 'https://researchbridge-server.onrender.com', {
       auth: {
@@ -34,14 +35,14 @@ export const initializeSocket = (token: string) => {
   return socket;
 };
 
-export const getSocket = () => {
+export const getSocket = (): SocketType => {
   if (!socket) {
     throw new Error('Socket not initialized. Call initializeSocket first.');
   }
   return socket;
 };
 
-export const disconnectSocket = () => {
+export const disconnectSocket = (): void => {
   if (socket) {
     socket.disconnect();
     socket = null;
