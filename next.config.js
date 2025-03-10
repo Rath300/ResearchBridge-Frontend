@@ -5,9 +5,11 @@ const nextConfig = {
   },
   images: {
     domains: ['researchbridge-server.onrender.com'],
+    unoptimized: true,
   },
+  output: 'standalone',
   webpack: (config) => {
-    config.externals = [...config.externals, 'socket.io-client'];
+    config.externals = [...(config.externals || []), 'socket.io-client'];
     return config;
   },
 };
