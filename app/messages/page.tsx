@@ -9,20 +9,34 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { formatDate } from "@/lib/utils"
 
+interface User {
+  id: string;
+  name: string;
+  avatar?: string;
+  status?: 'online' | 'offline';
+  lastSeen?: string;
+}
+
+interface Message {
+  id: string;
+  sender: string;
+  text: string;
+  timestamp: string;
+  read: boolean;
+}
+
 interface Conversation {
   id: string;
   type: 'direct' | 'group';
   name?: string;
-  with?: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
+  with?: User;
   lastMessage?: {
     text: string;
     timestamp: string;
   };
   unread?: number;
+  members?: User[];
+  messages?: Message[];
 }
 
 // Mock data for conversations
@@ -35,35 +49,35 @@ const conversations: Conversation[] = [
       name: "Alex Chen",
       avatar: "/placeholder.svg",
       status: "online",
-      lastSeen: new Date(),
+      lastSeen: new Date().toISOString(),
     },
     messages: [
       {
         id: "msg1",
         sender: "user1",
-        content: "Hey, have you reviewed the latest data from our microplastics samples?",
-        timestamp: new Date(Date.now() - 3600000 * 2),
+        text: "Hey, have you reviewed the latest data from our microplastics samples?",
+        timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
         read: true,
       },
       {
         id: "msg2",
         sender: "current-user",
-        content: "Yes, I've been analyzing it. The concentration levels are higher than we expected.",
-        timestamp: new Date(Date.now() - 3600000),
+        text: "Yes, I've been analyzing it. The concentration levels are higher than we expected.",
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
         read: true,
       },
       {
         id: "msg3",
         sender: "user1",
-        content: "That's concerning. Do you think we should expand our sampling locations?",
-        timestamp: new Date(Date.now() - 1800000),
+        text: "That's concerning. Do you think we should expand our sampling locations?",
+        timestamp: new Date(Date.now() - 1800000).toISOString(),
         read: true,
       },
       {
         id: "msg4",
         sender: "current-user",
-        content: "Definitely. I'm thinking we should add at least 3 more collection points downstream.",
-        timestamp: new Date(Date.now() - 900000),
+        text: "Definitely. I'm thinking we should add at least 3 more collection points downstream.",
+        timestamp: new Date(Date.now() - 900000).toISOString(),
         read: true,
       },
     ],
@@ -77,14 +91,14 @@ const conversations: Conversation[] = [
       name: "Maya Patel",
       avatar: "/placeholder.svg",
       status: "offline",
-      lastSeen: new Date(Date.now() - 86400000),
+      lastSeen: new Date(Date.now() - 86400000).toISOString(),
     },
     messages: [
       {
         id: "msg5",
         sender: "user2",
-        content: "I've updated the methodology section in our paper. Could you review it?",
-        timestamp: new Date(Date.now() - 86400000 * 2),
+        text: "I've updated the methodology section in our paper. Could you review it?",
+        timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
         read: true,
       },
     ],
@@ -104,22 +118,22 @@ const conversations: Conversation[] = [
       {
         id: "msg6",
         sender: "user1",
-        content: "Team meeting tomorrow at 4pm to discuss our findings.",
-        timestamp: new Date(Date.now() - 86400000),
+        text: "Team meeting tomorrow at 4pm to discuss our findings.",
+        timestamp: new Date(Date.now() - 86400000).toISOString(),
         read: true,
       },
       {
         id: "msg7",
         sender: "user3",
-        content: "I'll prepare the presentation with our latest results.",
-        timestamp: new Date(Date.now() - 43200000),
+        text: "I'll prepare the presentation with our latest results.",
+        timestamp: new Date(Date.now() - 43200000).toISOString(),
         read: false,
       },
       {
         id: "msg8",
         sender: "user2",
-        content: "Great! I'll review the statistical analysis section.",
-        timestamp: new Date(Date.now() - 21600000),
+        text: "Great! I'll review the statistical analysis section.",
+        timestamp: new Date(Date.now() - 21600000).toISOString(),
         read: false,
       },
     ],
@@ -133,14 +147,14 @@ const conversations: Conversation[] = [
       name: "Jordan Taylor",
       avatar: "/placeholder.svg",
       status: "online",
-      lastSeen: new Date(),
+      lastSeen: new Date().toISOString(),
     },
     messages: [
       {
         id: "msg9",
         sender: "user3",
-        content: "I've created a new visualization for our data. Check it out when you have time.",
-        timestamp: new Date(Date.now() - 7200000),
+        text: "I've created a new visualization for our data. Check it out when you have time.",
+        timestamp: new Date(Date.now() - 7200000).toISOString(),
         read: false,
       },
     ],
@@ -159,8 +173,8 @@ const conversations: Conversation[] = [
       {
         id: "msg10",
         sender: "user4",
-        content: "I've pushed the updated model to our repository. It's achieving 87% accuracy now.",
-        timestamp: new Date(Date.now() - 172800000),
+        text: "I've pushed the updated model to our repository. It's achieving 87% accuracy now.",
+        timestamp: new Date(Date.now() - 172800000).toISOString(),
         read: true,
       },
     ],
