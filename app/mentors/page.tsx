@@ -83,19 +83,77 @@ const mentors = [
 
 export default function MentorsPage() {
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Research Mentors</h1>
-        <div className="grid gap-6">
-          <div className="p-6 border rounded-lg">
-            <h2 className="text-2xl font-semibold mb-2">Coming Soon</h2>
-            <p className="text-gray-600">
-              The mentors feature is currently under development. Check back soon to connect with experienced research mentors.
-            </p>
-          </div>
+    <div className="container py-8">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold">Connect with Mentors</h1>
+          <p className="text-muted-foreground">
+            Find experienced researchers and professors to guide your research journey
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {mentors.map((mentor) => (
+            <Card key={mentor.id} className="card-hover">
+              <CardHeader>
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-14 w-14">
+                    <AvatarImage src={mentor.avatar} alt={mentor.name} />
+                    <AvatarFallback>
+                      {mentor.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <CardTitle>{mentor.name}</CardTitle>
+                    <CardDescription className="flex items-center">
+                      <Star className="h-3 w-3 fill-amber-500 text-amber-500 mr-1" />
+                      {mentor.rating} ({mentor.reviews} reviews)
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="font-medium">{mentor.title}</p>
+                  <p className="text-sm text-muted-foreground">{mentor.institution}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {mentor.specialties.map((specialty) => (
+                    <span
+                      key={specialty}
+                      className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-full"
+                    >
+                      {specialty}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-sm">{mentor.bio}</p>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Availability: {mentor.availability}
+                </div>
+              </CardContent>
+              <CardFooter className="flex gap-2">
+                <Button className="flex-1" asChild>
+                  <Link href={`/mentors/${mentor.id}/request`}>
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Request Mentorship
+                  </Link>
+                </Button>
+                <Button variant="outline" size="icon" asChild>
+                  <Link href={`/mentors/${mentor.id}/message`}>
+                    <MessageSquare className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </div>
-    </main>
-  );
+    </div>
+  )
 }
 

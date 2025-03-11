@@ -55,19 +55,77 @@ const researchProjects = [
 
 export default function ResearchPage() {
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Research Resources</h1>
-        <div className="grid gap-6">
-          <div className="p-6 border rounded-lg">
-            <h2 className="text-2xl font-semibold mb-2">Coming Soon</h2>
-            <p className="text-gray-600">
-              The research resources feature is currently under development. Check back soon to access tools and resources for your research.
-            </p>
+    <div className="container py-8">
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">My Research Projects</h1>
+            <p className="text-muted-foreground">Track and manage your ongoing research projects</p>
           </div>
+          <Button asChild>
+            <Link href="/research/new">
+              <Plus className="h-4 w-4 mr-2" />
+              New Project
+            </Link>
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {researchProjects.map((project) => (
+            <Card key={project.id} className="card-hover">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="line-clamp-2">{project.title}</CardTitle>
+                    <CardDescription>{project.category}</CardDescription>
+                  </div>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      project.status === "In Progress"
+                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                        : project.status === "Planning"
+                          ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
+                          : project.status === "Data Collection"
+                            ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300"
+                            : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                    }`}
+                  >
+                    {project.status}
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground line-clamp-3 mb-4">{project.description}</p>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Progress</span>
+                      <span>{project.progress}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: `${project.progress}%` }} />
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Team:</span> {project.members} members
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Updated:</span> {formatDate(project.lastUpdated)}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href={`/research/${project.id}`}>View Project</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </div>
-    </main>
+    </div>
   )
 }
 

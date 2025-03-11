@@ -76,19 +76,69 @@ const researchPosts = [
 
 export default function DiscoverPage() {
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Discover Research Projects</h1>
-        <div className="grid gap-6">
-          <div className="p-6 border rounded-lg">
-            <h2 className="text-2xl font-semibold mb-2">Coming Soon</h2>
-            <p className="text-gray-600">
-              The discover feature is currently under development. Check back soon to explore research projects and find collaborators.
-            </p>
-          </div>
+    <div className="container py-8">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold">Discover Research</h1>
+          <p className="text-muted-foreground">
+            Explore groundbreaking research from high school students around the world
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {researchPosts.map((post) => (
+            <Card key={post.id} className="overflow-hidden card-hover">
+              <div className="aspect-video relative">
+                <Image src={post.image || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
+              </div>
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  {post.tags.map((tag) => (
+                    <span key={tag} className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <CardTitle className="line-clamp-2">{post.title}</CardTitle>
+                <CardDescription className="line-clamp-2">{post.excerpt}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                    <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{post.author.name}</span>
+                    <span className="text-xs text-muted-foreground">{post.author.school}</span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <div className="text-sm text-muted-foreground">{formatDate(post.date)}</div>
+                <div className="flex items-center gap-4">
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <ThumbsUp className="h-4 w-4" />
+                    <span className="ml-1 text-xs">{post.likes}</span>
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MessageSquare className="h-4 w-4" />
+                    <span className="ml-1 text-xs">{post.comments}</span>
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <BookmarkPlus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex justify-center mt-6">
+          <Button variant="outline">Load More</Button>
         </div>
       </div>
-    </main>
+    </div>
   )
 }
 

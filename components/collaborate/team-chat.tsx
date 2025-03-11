@@ -101,7 +101,7 @@ export function TeamChat() {
           <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
             <Smile className="h-5 w-5" />
           </Button>
-          <Button variant="default" size="icon" className="rounded-full h-8 w-8" onClick={sendMessage}>
+          <Button variant="primary" size="icon" className="rounded-full h-8 w-8" onClick={sendMessage}>
             <Send className="h-5 w-5" />
           </Button>
         </div>
