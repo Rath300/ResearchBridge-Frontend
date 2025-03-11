@@ -313,7 +313,7 @@ export default function MessagesPage() {
 
                 <TabsContent value="direct" className="m-0 p-0">
                   {filteredConversations
-                    .filter((convo) => convo.type === "direct")
+                    .filter((convo): convo is DirectConversation => convo.type === "direct")
                     .map((convo) => (
                       <div
                         key={convo.id}
