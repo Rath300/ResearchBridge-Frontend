@@ -9,8 +9,50 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { formatDate } from "@/lib/utils"
 
+interface BaseUser {
+  id: string
+  name: string
+  avatar: string
+}
+
+interface DirectUser extends BaseUser {
+  status?: "online" | "offline"
+  lastSeen: string
+}
+
+interface GroupMember extends BaseUser {
+  // Group members don't need status or lastSeen
+}
+
+interface Message {
+  id: string
+  sender: string
+  content: string
+  timestamp: string
+  read: boolean
+}
+
+interface DirectConversation {
+  id: string
+  type: "direct"
+  with: DirectUser
+  messages: Message[]
+  unread: number
+}
+
+interface GroupConversation {
+  id: string
+  type: "group"
+  name: string
+  members: GroupMember[]
+  messages: Message[]
+  unread: number
+}
+
+type Conversation = DirectConversation | GroupConversation
+
 // Mock data for conversations
-const conversations = [
+const conversations: Conversation[] = [
   {
     id: "1",
     type: "direct",
@@ -19,35 +61,35 @@ const conversations = [
       name: "Alex Chen",
       avatar: "/placeholder.svg",
       status: "online",
-      lastSeen: new Date(),
+      lastSeen: new Date().toISOString(),
     },
     messages: [
       {
         id: "msg1",
         sender: "user1",
         content: "Hey, have you reviewed the latest data from our microplastics samples?",
-        timestamp: new Date(Date.now() - 3600000 * 2),
+        timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
         read: true,
       },
       {
         id: "msg2",
         sender: "current-user",
         content: "Yes, I've been analyzing it. The concentration levels are higher than we expected.",
-        timestamp: new Date(Date.now() - 3600000),
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
         read: true,
       },
       {
         id: "msg3",
         sender: "user1",
         content: "That's concerning. Do you think we should expand our sampling locations?",
-        timestamp: new Date(Date.now() - 1800000),
+        timestamp: new Date(Date.now() - 1800000).toISOString(),
         read: true,
       },
       {
         id: "msg4",
         sender: "current-user",
         content: "Definitely. I'm thinking we should add at least 3 more collection points downstream.",
-        timestamp: new Date(Date.now() - 900000),
+        timestamp: new Date(Date.now() - 900000).toISOString(),
         read: true,
       },
     ],
@@ -61,14 +103,14 @@ const conversations = [
       name: "Maya Patel",
       avatar: "/placeholder.svg",
       status: "offline",
-      lastSeen: new Date(Date.now() - 86400000),
+      lastSeen: new Date(Date.now() - 86400000).toISOString(),
     },
     messages: [
       {
         id: "msg5",
         sender: "user2",
         content: "I've updated the methodology section in our paper. Could you review it?",
-        timestamp: new Date(Date.now() - 86400000 * 2),
+        timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
         read: true,
       },
     ],
@@ -89,21 +131,21 @@ const conversations = [
         id: "msg6",
         sender: "user1",
         content: "Team meeting tomorrow at 4pm to discuss our findings.",
-        timestamp: new Date(Date.now() - 86400000),
+        timestamp: new Date(Date.now() - 86400000).toISOString(),
         read: true,
       },
       {
         id: "msg7",
         sender: "user3",
         content: "I'll prepare the presentation with our latest results.",
-        timestamp: new Date(Date.now() - 43200000),
+        timestamp: new Date(Date.now() - 43200000).toISOString(),
         read: false,
       },
       {
         id: "msg8",
         sender: "user2",
         content: "Great! I'll review the statistical analysis section.",
-        timestamp: new Date(Date.now() - 21600000),
+        timestamp: new Date(Date.now() - 21600000).toISOString(),
         read: false,
       },
     ],
@@ -117,14 +159,14 @@ const conversations = [
       name: "Jordan Taylor",
       avatar: "/placeholder.svg",
       status: "online",
-      lastSeen: new Date(),
+      lastSeen: new Date().toISOString(),
     },
     messages: [
       {
         id: "msg9",
         sender: "user3",
         content: "I've created a new visualization for our data. Check it out when you have time.",
-        timestamp: new Date(Date.now() - 7200000),
+        timestamp: new Date(Date.now() - 7200000).toISOString(),
         read: false,
       },
     ],
@@ -144,7 +186,7 @@ const conversations = [
         id: "msg10",
         sender: "user4",
         content: "I've pushed the updated model to our repository. It's achieving 87% accuracy now.",
-        timestamp: new Date(Date.now() - 172800000),
+        timestamp: new Date(Date.now() - 172800000).toISOString(),
         read: true,
       },
     ],
@@ -153,7 +195,7 @@ const conversations = [
 ]
 
 export default function MessagesPage() {
-  const [activeConversation, setActiveConversation] = useState(conversations[0])
+  const [activeConversation, setActiveConversation] = useState<Conversation>(conversations[0])
   const [messageInput, setMessageInput] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -173,7 +215,8 @@ export default function MessagesPage() {
     setMessageInput("")
   }
 
-  const formatMessageTime = (date: Date) => {
+  const formatMessageTime = (dateStr: string) => {
+    const date = new Date(dateStr)
     const now = new Date()
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
 
@@ -476,7 +519,7 @@ export default function MessagesPage() {
                     <Button variant="ghost" size="icon" className="rounded-full">
                       <Smile className="h-5 w-5" />
                     </Button>
-                    <Button variant="primary" size="icon" className="rounded-full" onClick={sendMessage}>
+                    <Button variant="default" size="icon" className="rounded-full" onClick={sendMessage}>
                       <Send className="h-5 w-5" />
                     </Button>
                   </div>
