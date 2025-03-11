@@ -353,7 +353,7 @@ export default function MessagesPage() {
 
                 <TabsContent value="groups" className="m-0 p-0">
                   {filteredConversations
-                    .filter((convo) => convo.type === "group")
+                    .filter((convo): convo is GroupConversation => convo.type === "group")
                     .map((convo) => (
                       <div
                         key={convo.id}
