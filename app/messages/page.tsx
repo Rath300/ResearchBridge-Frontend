@@ -280,7 +280,7 @@ export default function MessagesPage() {
                       ) : (
                         <div className="relative h-10 w-10 flex items-center justify-center bg-primary/10 rounded-full">
                           <span className="text-primary font-medium text-sm">
-                            {convo.name
+                            {((convo as GroupConversation).name)
                               .split(" ")
                               .map((word) => word[0])
                               .join("")}
@@ -291,7 +291,7 @@ export default function MessagesPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-baseline">
                           <p className="font-medium truncate">
-                            {convo.type === "direct" ? convo.with.name : convo.name}
+                            {convo.type === "direct" ? convo.with.name : (convo as GroupConversation).name}
                           </p>
                           <span className="text-xs text-muted-foreground">
                             {formatMessageTime(convo.messages[convo.messages.length - 1].timestamp)}
