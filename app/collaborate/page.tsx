@@ -70,9 +70,7 @@ export default function CollaboratePage() {
 
   // Find the current project and document
   const currentProject = projects.find((p) => p.id === projectId) || projects[0]
-  const currentDocument = documentId
-    ? currentProject.documents.find((d) => d.id === documentId)
-    : currentProject.documents[0]
+  const currentDocument = currentProject.documents.find((d) => d.id === documentId) || currentProject.documents[0]
 
   useEffect(() => {
     if (tabParam) {
